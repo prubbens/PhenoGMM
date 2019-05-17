@@ -26,7 +26,7 @@ cytometry.
 
 ### Examples of workflow: 
 Two running examples in jupyter notebooks are given, one for the _in silico_ data study, and one for studying natural communities: 
-- _In silico_ study, for $a = 1$, to predict $D_1$: 
+- _In silico_ study, for $a = 1$, to predict $D_1$: [Example_in_silico_analysis_a=1_D1.ipynb](https://github.com/prubbens/PhenoGMM/blob/master/Code/Example_in_silico_analysis_a%3D1_D1.ipynb). 
 - Data of Survey 1, to predict $D_1$, including missing values: [Example_SurveyI_D1_MV.ipynb](https://github.com/prubbens/PhenoGMM/blob/master/Code/Example_SurveyI_D1_MV.ipynb). 
 
 ### Results: 
