@@ -90,30 +90,6 @@ def concat_rep(path_data, list_filenames, idx_comm, frac, n_cells, n_rep):
         df = pd.concat([df,df_rep.sample(np.int(frac*n_cells))], ignore_index=True, axis=0)
     return df 
 
-
-''' Concatenate technical replicates of the same sample into one dataframe
-
-Parameters:
-----------
-path_data: directory which contains the files
-list_filenames: list containing filenames
-idx_comm: index of specific sample
-frac: fraction of cells to sample
-n_cells: number of cells to sample per community
-n_rep: number of replicates
-    
-'''
-def concat_rep_rw(path_files, list_filenames, n_rep, n_cells): 
-    df = pd.DataFrame()
-    for i in np.arange(0,n_rep): 
-        df_rep = pd.read_csv(path_files + '/' + list_filenames[i], index_col=0, header=0)
-        if df_rep.shape[0] < n_cells: 
-            n_cells = df_rep.shape[0]
-    for j in np.arange(0,n_rep): 
-        df_rep = pd.read_csv(path_files + '/' + list_filenames[j], index_col=0, header=0)
-        df = pd.concat([df,df_rep.sample(n_cells)], ignore_index=True, axis=0)
-    return df
-
 ''' Sample cells according compositions and concatenate into one dataframe
 
 Paramaters: 
@@ -172,11 +148,10 @@ path_data: directory which contains the files
 list_filenames: list containing filenames
 df_comp: dataframe containing compositions
 features: variables in dataframe
-n_bins: number of bins
+grids: list of numpy two-dimensional histograms for each pairwise combination of all features
 n_cells: number of cells to sample per community
 n_rep: number of replicates
 norm_bool: boolean whether to normalize the data
-scaler: object to standardize dataframe
 transform_bool: if True, first transform data according to transform()
 '''
 def get_fcfp_binning_grid(path_data, list_filenames, df_comp, features, grids, n_cells, n_rep, norm_bool=False, transform_bool=True):
@@ -200,28 +175,6 @@ def get_fcfp_binning_grid(path_data, list_filenames, df_comp, features, grids, n
         fingerprint.append(fingerprint_grid)
     df_fingerprint = pd.DataFrame(np.array(fingerprint), index=df_comp.index)
     return df_fingerprint 
-
-''' Return individual fcfps '''
-def get_fcfp_binning_grid_rw(df_meta, columns_rep, n_rep, n_cells, features, grids, transform_bool, norm, path_files):
-    fingerprint = []
-    bivariate_combs = list(itertools.combinations(features, 2))    
-    for index in df_meta.index:
-        list_filenames = []
-        for header in columns_rep: 
-            list_filenames.append(df_meta.loc[index,header])
-        df_sample = concat_rep_rw(path_files, list_filenames, n_rep, n_cells)
-        if transform_bool==True: 
-            df_sample = transform(df_sample, features)
-        fingerprint_grid = []
-        for grid, comb_feat in zip(grids,bivariate_combs): 
-            hist, grid_ = np.histogramdd(df_sample.loc[:,comb_feat].values, bins=grid, normed=norm) 
-            hist = np.divide(hist, np.float(df_sample.shape[0]))
-            fingerprint_grid.extend(hist.reshape(-1))
-        fingerprint.append(fingerprint_grid)
-    fingerprint
-    df_fingerprint = pd.DataFrame(np.array(fingerprint), index=df_meta.index)
-    return df_fingerprint
-
 
 ''' Create Gaussian Mixture Model and fit to dataframe df 
 
@@ -253,11 +206,11 @@ list_filenames: list containing filenames
 df_comp: dataframe containing compositions
 df_comp: dataframe containing compositions
 features: variables in dataframe
-n_mixtures: number of mixtures to initialize Gaussian Mixture Model
+gmm_fitted: fitted Gaussian Mixture Model
 n_cells: number of cells to sample per community
 n_rep: number of replicates
+n_mixtures: number of mixtures to initialize Gaussian Mixture Model
 transform_bool: if True, first transform data according to transform()
-scaler: object to standardize dataframe
 '''
 def get_fcfp_gmm(path_data, list_filenames, df_comp, features, gmm_fitted, n_cells, n_rep, n_mixtures=100,transform_bool=True): 
     fingerprint = []
@@ -276,38 +229,6 @@ def get_fcfp_gmm(path_data, list_filenames, df_comp, features, gmm_fitted, n_cel
         fcfp = np.divide(fcfp, np.float(df_comm.shape[0]))
         fingerprint.append(fcfp.reshape(-1))
     return pd.DataFrame(fingerprint, index=df_comp.index)
-
-
-''' Cluster individual samples using a fitted Gaussian Mixture Model and derive cell counts per mixture 
-
-Parameters:
-----------
-path_data: directory which contains the files
-list_filenames: list containing filenames
-df_comp: dataframe containing compositions
-df_comp: dataframe containing compositions
-features: variables in dataframe
-n_mixtures: number of mixtures to initialize Gaussian Mixture Model
-n_cells: number of cells to sample per community
-n_rep: number of replicates
-transform_bool: if True, first transform data according to transform()
-scaler: object to standardize dataframe
-'''
-def get_fcfp_gmm_rw(df_meta, columns_rep, n_rep, n_cells, n_mix, features, gmm, scaler, transform_bool, path_files):
-    fingerprint = []
-    for index in df_meta.index:
-        list_filenames = []
-        for header in columns_rep: 
-            list_filenames.append(df_meta.loc[index,header])
-        df_sample = concat_rep_rw(path_files, list_filenames, n_rep, n_cells)
-        if transform_bool==True: 
-            df_sample = transform(df_sample, features)
-        preds = gmm.predict(scaler.transform(df_sample.loc[:,features].values))
-        fcfp = np.bincount(preds, minlength = n_mix)
-        fcfp = np.divide(fcfp, np.float(df_sample.shape[0]))
-        fingerprint.append(fcfp.reshape(-1))
-    df_fingerprint = pd.DataFrame(fingerprint, index=df_meta.index)
-    return df_fingerprint
 
 ''' Create K-fold cross-validation object
 

@@ -100,13 +100,10 @@ def concat_rep(n_cells, path_dir, list_filenames, n_rep):
 
 Parameters:
 ----------
-path_data: directory which contains the files
+path_files: directory which contains the files
 list_filenames: list containing filenames
-idx_comm: index of specific sample
-frac: fraction of cells to sample
-n_cells: number of cells to sample per community
 n_rep: number of replicates
-    
+n_cells: number of cells to sample per community  
 '''
 def concat_rep_rw(path_files, list_filenames, n_rep, n_cells): 
     df = pd.DataFrame()
@@ -117,34 +114,6 @@ def concat_rep_rw(path_files, list_filenames, n_rep, n_cells):
     for j in np.arange(0,n_rep): 
         df_rep = pd.read_csv(path_files + '/' + list_filenames[j], index_col=0, header=0)
         df = pd.concat([df,df_rep.sample(n_cells)], ignore_index=True, axis=0)
-    return df
-
-''' Sample cells according compositions and concatenate into one dataframe
-
-Paramaters: 
-----------
-
-path_data: directory which contains the files
-list_filenames: list containing filenames
-df_comp: dataframe containing compositions
-n_cells: number of cells to sample per community
-n_rep: number of replicates
-'''
-def get_insilico_df(path_data, list_filenames, df_comp, n_cells, n_rep): 
-    list_shape = []
-    df = pd.DataFrame()    
-    df_fp = pd.DataFrame()
-
-    for fp in np.arange(0,df_comp.shape[0]): 
-        df_fp = pd.DataFrame()
-        i=0
-        for frac in df_comp.iloc[fp,:]: 
-            if frac > 0: 
-                df_frac = concat_rep(path_data, list_filenames, i, frac, n_cells, n_rep)
-                df_fp = pd.concat([df_fp,df_frac], ignore_index=True, axis=0)
-            i+=1
-        list_shape.append(df_fp.shape[0])
-        df = pd.concat([df,df_fp], ignore_index=True, axis=0)       
     return df
 
 '''Get multiple equally spaced grids, for each bivariate combinations of variables
@@ -173,41 +142,16 @@ def get_binning_grid(df, features, n_bins, norm=False, transform_bool=True):
 Parameters: 
 ----------
 
-path_data: directory which contains the files
-list_filenames: list containing filenames
-df_comp: dataframe containing compositions
-features: variables in dataframe
-n_bins: number of bins
-n_cells: number of cells to sample per community
+df_meta: metadata file, containing sample names 
 n_rep: number of replicates
-norm_bool: boolean whether to normalize the data
-scaler: object to standardize dataframe
+n_cells: number of cells to sample per community
+features: variables in dataframe
+grids: list of numpy two-dimensional histograms for each pairwise combination of all features
+transform_bool: boolean whether to normalize the data
 transform_bool: if True, first transform data according to transform()
+path_files: directory which contains the files
+list_filenames: list containing filenames
 '''
-def get_fcfp_binning_grid(path_data, list_filenames, df_comp, features, grids, n_cells, n_rep, scaler, norm_bool=False, transform_bool=True):
-    fingerprint = []
-    bivariate_combs = list(itertools.combinations(features, 2))    
-    for i in np.arange(df_comp.shape[0]): 
-        mock = df_comp.iloc[i,:].nonzero()[0]
-        df_comm = pd.DataFrame()
-        for idx in mock: 
-            df_frac = concat_rep(path_data, list_filenames, idx, df_comp.iloc[i,idx], n_cells, n_rep)
-            df_comm = pd.concat([df_comm,df_frac], ignore_index=True, axis=0)
-        if transform_bool==True: 
-            df_trans = transform(df_comm,features)
-        else: 
-            df_trans = df_comm
-        df_trans_scaled = pd.DataFrame(scaler.transform(df_trans.loc[:,features]), index=df_trans.index, columns=features)
-        fingerprint_grid = []
-        for grid, comb_feat in zip(grids,bivariate_combs): 
-            hist, grid_ = np.histogramdd(df_trans_scaled.loc[:,comb_feat].values, bins=grid, normed=norm_bool) 
-            hist = np.divide(hist, np.float(df_trans_scaled.shape[0]))
-            fingerprint_grid.extend(hist.reshape(-1))
-        fingerprint.append(fingerprint_grid)
-    df_fingerprint = pd.DataFrame(np.array(fingerprint), index=df_comp.index)
-    return df_fingerprint 
-
-''' Return individual fcfps '''
 def get_fcfp_binning_grid_rw(df_meta, n_rep, n_cells, features, grids, transform_bool, norm, path_files, list_filenames):
     fingerprint = []
     bivariate_combs = list(itertools.combinations(features, 2))    
@@ -254,51 +198,15 @@ def get_gmm_fitted(df, features, n_mixtures=100, cov_type='full', transform_bool
 
 Parameters:
 ----------
-path_data: directory which contains the files
-list_filenames: list containing filenames
-df_comp: dataframe containing compositions
-df_comp: dataframe containing compositions
-features: variables in dataframe
-n_mixtures: number of mixtures to initialize Gaussian Mixture Model
-n_cells: number of cells to sample per community
+df_meta: metadata file, containing sample names 
 n_rep: number of replicates
-transform_bool: if True, first transform data according to transform()
-scaler: object to standardize dataframe
-'''
-def get_fcfp_gmm(path_data, list_filenames, df_comp, features, gmm_fitted, n_cells, n_rep, scaler, n_mixtures=100,transform_bool=True): 
-    fingerprint = []
-    for i in np.arange(df_comp.shape[0]): 
-        mock = df_comp.iloc[i,:].nonzero()[0]
-        df_comm = pd.DataFrame()
-        for idx in mock: 
-            df_frac = concat_rep(path_data, list_filenames, idx, df_comp.iloc[i,idx], n_cells, n_rep)
-            df_comm = pd.concat([df_comm,df_frac], ignore_index=True, axis=0)
-        if transform_bool==True: 
-            df_trans = transform(df_comm,features)
-        else: 
-            df_trans = df_comm
-        df_trans_scaled = scaler.transform(df_trans.loc[:,features].values)
-        preds = gmm_fitted.predict(df_trans_scaled)
-        fcfp = np.bincount(preds, minlength = n_mixtures)
-        fcfp = np.divide(fcfp, np.float(df_comm.shape[0]))
-        fingerprint.append(fcfp.reshape(-1))
-    return pd.DataFrame(fingerprint, index=df_comp.index)
-
-
-''' Cluster individual samples using a fitted Gaussian Mixture Model and derive cell counts per mixture 
-
-Parameters:
-----------
-path_data: directory which contains the files
-list_filenames: list containing filenames
-df_comp: dataframe containing compositions
-df_comp: dataframe containing compositions
-features: variables in dataframe
-n_mixtures: number of mixtures to initialize Gaussian Mixture Model
 n_cells: number of cells to sample per community
-n_rep: number of replicates
-transform_bool: if True, first transform data according to transform()
-scaler: object to standardize dataframe
+n_mix: numer of mixtures
+features: variables in dataframe
+gmm: fitted gaussian mixture model
+transform_bool: boolean whether to normalize the data
+path_files: directory which contains the files
+list_filenames: list containing filenames
 '''
 def get_fcfp_gmm_rw(df_meta, n_rep, n_cells, n_mix, features, gmm, transform_bool, path_files, list_filenames):
     fingerprint = []
