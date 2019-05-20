@@ -1,6 +1,6 @@
 # _PhenoGMM_: Gaussian mixture modelling of microbial cytometry data enables efficient predictions of biodiversity 
 
-This repository accompanies the manscript "*_PhenoGMM_: Gaussian mixture modelling of microbial cytometry data enables efficient predictions of biodiversity*" by P. Rubbens, R. Props, F.-M. Kerckhof, N. Boon and W. Waegeman. Biorxiv ID: 641464. 
+This repository accompanies the manscript "*_PhenoGMM_: Gaussian mixture modelling of microbial cytometry data enables efficient predictions of biodiversity*" by P. Rubbens, R. Props, F.-M. Kerckhof, N. Boon and W. Waegeman. Biorxiv ID: [641464](https://www.biorxiv.org/content/10.1101/641464v1). 
 
 ## Abstract
 *Motivation*: Microbial flow cytometry allows to rapidly characterize microbial community diversity and
