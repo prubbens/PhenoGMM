@@ -260,9 +260,9 @@ cv: cross-validation object
 def get_trained_RF(df_train, df_target, features, n_trees, min_samples_leaf, n_iter, cv): 
     len_feat = len(features)
     if np.sqrt(len_feat)*min_samples_leaf < n_iter: 
-        rf = RandomizedSearchCV(RandomForestRegressor(n_estimators=n_trees, criterion='mse'), scoring='neg_mean_squared_error', iid = False, param_distributions={'max_features': np.arange(1,len_feat), 'min_samples_leaf': np.arange(1,min_samples_leaf+1)}, cv=cv, n_iter=np.sqrt(len_feat)*min_samples_leaf)
+        rf = RandomizedSearchCV(RandomForestRegressor(n_estimators=n_trees, criterion='mse', oob_score=True), scoring='neg_mean_squared_error', iid = False, param_distributions={'max_features': np.arange(1,len_feat), 'min_samples_leaf': np.arange(1,min_samples_leaf+1)}, cv=cv, n_iter=np.sqrt(len_feat)*min_samples_leaf)
     else: 
-        rf = RandomizedSearchCV(RandomForestRegressor(n_estimators=n_trees, criterion='mse'), scoring='neg_mean_squared_error', iid = False, param_distributions={'max_features': np.arange(1,len_feat), 'min_samples_leaf': np.arange(1,min_samples_leaf+1)}, cv=cv, n_iter=n_iter)
+        rf = RandomizedSearchCV(RandomForestRegressor(n_estimators=n_trees, criterion='mse', oob_score=True), scoring='neg_mean_squared_error', iid = False, param_distributions={'max_features': np.arange(1,len_feat), 'min_samples_leaf': np.arange(1,min_samples_leaf+1)}, cv=cv, n_iter=n_iter)
     rf.fit(df_train.loc[:,features],df_target)
     return rf
 
