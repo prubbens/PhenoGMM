@@ -58,7 +58,7 @@ results = pd.concat([results_SOR_a01,results_SOR_a1,results_SOR_a10,results_cycl
 #results.rename_axis('OTU',inplace=True)
 #results.reset_index(inplace=True)
 
-g = sns.catplot(x='Dataset',y=r'$R^2$',data=results, kind='box', size=4, aspect=1.6, sharey=True, color='white',linewidth=3)
+g = sns.catplot(x='Dataset',y=r'$R^2$',data=results, kind='box', height=4, aspect=1.6, sharey=True, color='white',linewidth=3)
 pal = sns.color_palette('cubehelix')[0:1]
 #h = sns.swarmplot(x='Dataset', y=r'$R^2$', data=results, dodge=True, palette=pal, alpha=0.3)
 g.set_xlabels(fontsize=18)

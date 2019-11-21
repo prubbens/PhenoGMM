@@ -34,7 +34,7 @@ df_mus_sup = pd.concat([df_mus_gmm_sup.loc[:,FEAT_UNS],df_mus_grid_sup.loc[:,FEA
 df_mus_sup = pd.melt(df_mus_sup, id_vars = ['Method'], var_name = 'Diversity index', value_name = r'$\tau_B$')
 
 pal = sns.color_palette("colorblind")
-g = sns.catplot(x='Diversity index',y=r'$\tau_B$',data=df_inl_sup, legend=False, hue = 'Method', kind='box', size=5, aspect=1, sharey=True, palette=pal,linewidth=2.5)
+g = sns.catplot(x='Diversity index',y=r'$\tau_B$',data=df_inl_sup, legend=False, hue = 'Method', kind='box', height=5, aspect=1, sharey=True, palette=pal,linewidth=2.5)
 #g = sns.catplot(x='Dataset',y=r'$R^2$',data=results, kind='box', size=4, aspect=1.6, sharey=True, color='white',linewidth=3)
 pal = sns.color_palette('cubehelix')[0:1]
 h = sns.stripplot(x='Diversity index',y=r'$\tau_B$',data=df_inl_sup, hue = 'Method', dodge=True, palette=pal, alpha=0.8)   
@@ -56,7 +56,7 @@ plt.hlines(y = 0.171, xmin = -1, xmax = 3, linestyles='--', colors='grey')
 plt.savefig('Figures/INL_SUP_OOB.png',dpi=500,bbox_tight=True)
 
 pal = sns.color_palette("colorblind")
-g = sns.catplot(x='Diversity index',y=r'$\tau_B$',data=df_mich_sup, legend=False, hue = 'Method', kind='box', size=5, aspect=1, sharey=True, palette=pal,linewidth=2.5)
+g = sns.catplot(x='Diversity index',y=r'$\tau_B$',data=df_mich_sup, legend=False, hue = 'Method', kind='box', height=5, aspect=1, sharey=True, palette=pal,linewidth=2.5)
 #g = sns.catplot(x='Dataset',y=r'$R^2$',data=results, kind='box', size=4, aspect=1.6, sharey=True, color='white',linewidth=3)
 pal = sns.color_palette('cubehelix')[0:1]
 h = sns.stripplot(x='Diversity index',y=r'$\tau_B$',data=df_mich_sup, hue = 'Method', dodge=True, palette=pal, alpha=0.8)   
@@ -78,7 +78,7 @@ plt.tight_layout()
 plt.savefig('Figures/MICH_SUP_OOB.png',dpi=500,bbox_tight=True)
 
 pal = sns.color_palette("colorblind")
-g = sns.catplot(x='Diversity index',y=r'$\tau_B$',data=df_mus_sup, legend=False, hue = 'Method', kind='box', size=5, aspect=1, sharey=True, palette=pal,linewidth=2.5)
+g = sns.catplot(x='Diversity index',y=r'$\tau_B$',data=df_mus_sup, legend=False, hue = 'Method', kind='box', height=5, aspect=1, sharey=True, palette=pal,linewidth=2.5)
 #g = sns.catplot(x='Dataset',y=r'$R^2$',data=results, kind='box', size=4, aspect=1.6, sharey=True, color='white',linewidth=3)
 pal = sns.color_palette('cubehelix')[0:1]
 h = sns.stripplot(x='Diversity index',y=r'$\tau_B$',data=df_mus_sup, hue = 'Method', dodge=True, palette=pal, alpha=0.8)   
@@ -108,7 +108,7 @@ df_mus_r2 = pd.concat([df_mus_gmm_sup.loc[:,FEAT_UNS],df_mus_grid_sup.loc[:,FEAT
 df_mus = pd.melt(df_mus_r2, id_vars = ['Method'], var_name = 'Diversity index', value_name = r'$R^2$')
 
 pal = sns.color_palette("colorblind")
-g = sns.catplot(x='Diversity index',y=r'$R^2$',data=df_inl, legend=False, hue = 'Method', kind='box', size=5, aspect=1, sharey=True, palette=pal,linewidth=2.5)
+g = sns.catplot(x='Diversity index',y=r'$R^2$',data=df_inl, legend=False, hue = 'Method', kind='box', height=5, aspect=1, sharey=True, palette=pal,linewidth=2.5)
 #g = sns.catplot(x='Dataset',y=r'$R^2$',data=results, kind='box', size=4, aspect=1.6, sharey=True, color='white',linewidth=3)
 pal = sns.color_palette('cubehelix')[0:1]
 h = sns.stripplot(x='Diversity index',y=r'$R^2$',data=df_inl, hue = 'Method', dodge=True, palette=pal, alpha=0.8)   
@@ -129,7 +129,7 @@ plt.tight_layout()
 plt.savefig('Figures/INL_SUP_OOB_r2.png',dpi=500,bbox_tight=True)
 
 pal = sns.color_palette("colorblind")
-g = sns.catplot(x='Diversity index',y=r'$R^2$',data=df_mich, legend=False, hue = 'Method', kind='box', size=5, aspect=1, sharey=True, palette=pal,linewidth=2.5)
+g = sns.catplot(x='Diversity index',y=r'$R^2$',data=df_mich, legend=False, hue = 'Method', kind='box', height=5, aspect=1, sharey=True, palette=pal,linewidth=2.5)
 #g = sns.catplot(x='Dataset',y=r'$R^2$',data=results, kind='box', size=4, aspect=1.6, sharey=True, color='white',linewidth=3)
 pal = sns.color_palette('cubehelix')[0:1]
 h = sns.stripplot(x='Diversity index',y=r'$R^2$',data=df_mich, hue = 'Method', dodge=True, palette=pal, alpha=0.8)   
@@ -150,7 +150,7 @@ plt.tight_layout()
 plt.savefig('Figures/MICH_SUP_OOB_r2.png',dpi=500,bbox_tight=True)
 
 pal = sns.color_palette("colorblind")
-g = sns.catplot(x='Diversity index',y=r'$R^2$',data=df_mus, legend=False, hue = 'Method', kind='box', size=5, aspect=1, sharey=True, palette=pal,linewidth=2.5)
+g = sns.catplot(x='Diversity index',y=r'$R^2$',data=df_mus, legend=False, hue = 'Method', kind='box', height=5, aspect=1, sharey=True, palette=pal,linewidth=2.5)
 #g = sns.catplot(x='Dataset',y=r'$R^2$',data=results, kind='box', size=4, aspect=1.6, sharey=True, color='white',linewidth=3)
 pal = sns.color_palette('cubehelix')[0:1]
 h = sns.stripplot(x='Diversity index',y=r'$R^2$',data=df_mus, hue = 'Method', dodge=True, palette=pal, alpha=0.8)   

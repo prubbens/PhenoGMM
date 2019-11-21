@@ -71,7 +71,7 @@ df_uns = pd.concat([df_a0_1_gmm_uns.loc[:,FEAT_UNS],df_a0_1_grid_uns.loc[:,FEAT_
 df_uns = pd.melt(df_uns, id_vars = ['Method','Dataset'], var_name = 'Diversity index', value_name = r'$\rho$')
 
 pal = sns.color_palette("colorblind")
-g = sns.catplot(x='Dataset',y=r'$\rho$',data=df_uns, legend=False, hue = 'Method', kind='box', size=4, aspect=2, sharey=True, palette=pal,linewidth=2.5)
+g = sns.catplot(x='Dataset',y=r'$\rho$',data=df_uns, legend=False, hue = 'Method', kind='box', height=4, aspect=2, sharey=True, palette=pal,linewidth=2.5)
 #g = sns.catplot(x='Dataset',y=r'$R^2$',data=results, kind='box', size=4, aspect=1.6, sharey=True, color='white',linewidth=3)
 pal = sns.color_palette('cubehelix')[0:1]
 h = sns.stripplot(x='Dataset',y=r'$\rho$',data=df_uns, hue = 'Method', dodge=True, palette=pal, alpha=0.8)   
